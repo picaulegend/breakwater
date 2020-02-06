@@ -24,7 +24,6 @@ const getTokens = () => {
 };
 
 const setTokenForOperation = async operation => {
-  console.log(getTokens());
   return operation.setContext({
     headers: {
       ...getTokens()

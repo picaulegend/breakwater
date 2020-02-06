@@ -24,11 +24,7 @@ export default () => (
           "loading..."
         ) : (
           <div>
-            {data.items.map(({ title, id, user }) => (
-              <div key={id}>
-                <b>{title}</b> {user ? `added by ${user.email}` : null}
-              </div>
-            ))}
+            <h1>BREAKRAILS</h1>
             <Test />
           </div>
         )}

@@ -9,10 +9,17 @@ module Types
       Item.preload(:user)
     end
 
-    field :user, Types::UserType, null: true
+    field :user, Types::UserType, null: true do
+      description "Find session user or a user by ID"
+      argument :id, ID, required: false
+    end
 
-    def user
-      context[:current_user]
+    def user(id: nil)
+      if id
+        User.find(id)
+      else
+        context[:current_user]
+      end
     end
   end
 end
