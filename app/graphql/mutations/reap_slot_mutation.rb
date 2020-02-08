@@ -37,6 +37,9 @@ module Mutations
         user: user,
       )
 
+      # empty slot
+      slot.update(name: nil, produce_type: nil, nutrition: nil, health: nil, longevity: nil, size: nil, days_required: nil, day_of_seeding: nil)
+
       if product.save
         { product: product }
       else

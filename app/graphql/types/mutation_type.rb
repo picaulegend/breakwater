@@ -7,5 +7,6 @@ module Types
     field :add_slot, mutation: Mutations::AddSlotMutation
     field :seed_slot, mutation: Mutations::SeedSlotMutation
     field :reap_slot, mutation: Mutations::ReapSlotMutation
+    field :sell_product, mutation: Mutations::SellProductMutation
   end
 end

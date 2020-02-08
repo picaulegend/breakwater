@@ -1,14 +1,14 @@
 module Types
   class SlotType < Types::BaseObject
     field :id, ID, null: false
-    field :name, String, null: false
-    field :produce_type, ProduceTypes, null: false
-    field :nutrition, Integer, null: false
-    field :health, Integer, null: false
-    field :longevity, Integer, null: false
-    field :size, Integer, null: false
-    field :days_required, Integer, null: false
-    field :day_of_seeding, Integer, null: false
+    field :name, String, null: true
+    field :produce_type, ProduceTypes, null: true
+    field :nutrition, Integer, null: true
+    field :health, Integer, null: true
+    field :longevity, Integer, null: true
+    field :size, Integer, null: true
+    field :days_required, Integer, null: true
+    field :day_of_seeding, Integer, null: true
 
     field :seed, Types::SeedType, null: true
   end

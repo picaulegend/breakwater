@@ -21,5 +21,14 @@ module Types
         context[:current_user]
       end
     end
+
+    field :farm, Types::FarmType, null: true do
+      description "Find a farm by ID"
+      argument :id, ID, required: false
+    end
+
+    def farm(id: nil)
+      Farm.find(id)
+    end
   end
 end

@@ -8,10 +8,9 @@ module Mutations
     field :errors, Types::ValidationErrorsType, null: true
 
     def resolve(seed_id:, slot_id:)
-      #   check_authentication!
+      check_authentication!
 
       seed = Seed.find(seed_id)
-      puts seed.produce_type
       # update the slot
       slot = Slot.find(slot_id)
 
@@ -21,11 +20,17 @@ module Mutations
       day_of_seeding = 3 # needs to be queried from current_user
       days_required = seed.days_required ? seed.days_required : 5
 
+      puts seed.name
+      puts slot.id
+
       if slot.update(name: seed.name, produce_type: produce_type, nutrition: seed.nutrition, health: seed.health, longevity: seed.longevity, size: 3, days_required: days_required, day_of_seeding: day_of_seeding)
         { slot: slot }
       else
         { errors: item.errors }
       end
+
+      # delete seed
+      seed.destroy
     end
   end
 end

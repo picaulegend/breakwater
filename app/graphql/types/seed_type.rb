@@ -6,7 +6,6 @@ module Types
     field :longevity, Integer, null: false
     field :health, Integer, null: false
     field :nutrition, Integer, null: false
-    # field :toxicity, Integer, null: false
     field :days_required, Integer, null: false
   end
 end

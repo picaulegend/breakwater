@@ -1,11 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
 import Provider from "../components/Provider";
-import Farm from "../components/Farm";
+import App from "../components/App";
 
 render(
   <Provider>
-    <Farm />
+    <App />
   </Provider>,
   document.querySelector("#root")
 );
