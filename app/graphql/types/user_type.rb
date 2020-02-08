@@ -4,6 +4,7 @@ module Types
     field :email, String, null: false
     field :name, String, null: false
     field :farm, Types::FarmType, null: true
+    field :store, Types::StoreType, null: true
     field :seeds, [Types::SeedType], null: true
     field :products, [Types::ProductType], null: true
     field :days_played, Int, null: true

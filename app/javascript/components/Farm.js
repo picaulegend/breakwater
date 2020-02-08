@@ -4,8 +4,8 @@ import gql from "graphql-tag";
 import { css, jsx } from "@emotion/core";
 
 const farm = gql`
-  query Farm {
-    farm(id: "1") {
+  query Farm($id: ID!) {
+    farm(id: $id) {
       id
       name
       stacks {
@@ -66,9 +66,9 @@ const reapSlot = gql`
   }
 `;
 
-export default function Farm({ availableSeeds }) {
+export default function Farm({ availableSeeds, farmId }) {
   return (
-    <Query query={farm}>
+    <Query query={farm} variables={{id: farmId}}>
       {({ data, loading, error }) => {
         console.log(data, error);
         return (

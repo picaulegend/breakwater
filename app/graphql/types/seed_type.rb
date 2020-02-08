@@ -7,5 +7,6 @@ module Types
     field :health, Integer, null: false
     field :nutrition, Integer, null: false
     field :days_required, Integer, null: false
+    field :value, Integer, null: true
   end
 end

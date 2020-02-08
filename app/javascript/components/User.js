@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { css, jsx } from "@emotion/core";
 
 import Farm from "./Farm";
+import Store from "./Store";
 
 const user = gql`
   query User {
@@ -12,6 +13,12 @@ const user = gql`
       name
       daysPlayed
       money
+      farm {
+        id
+      }
+      store {
+        id
+      }
       seeds {
         id
         name
@@ -113,7 +120,8 @@ function WithData({ data }) {
       </Mutation>
       <br />
       <h2>Farm:</h2>
-      <Farm availableSeeds={user.seeds} />
+      <Farm availableSeeds={user.seeds} farmId={user.farm.id} />
+      <Store storeId={user.store.id} userId={id} />
     </div>
   );
 }

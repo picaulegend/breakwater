@@ -30,5 +30,14 @@ module Types
     def farm(id: nil)
       Farm.find(id)
     end
+
+    field :store, Types::StoreType, null: true do
+      description "Find a store by ID"
+      argument :id, ID, required: false
+    end
+
+    def store(id: nil)
+      Store.find(id)
+    end
   end
 end

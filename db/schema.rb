@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_03_150245) do
+ActiveRecord::Schema.define(version: 2020_02_08_170839) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,20 @@ ActiveRecord::Schema.define(version: 2020_02_03_150245) do
     t.index ["user_id"], name: "index_items_on_user_id"
   end
 
+  create_table "products", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
+    t.decimal "value"
+    t.decimal "nutrition"
+    t.decimal "health"
+    t.decimal "longevity"
+    t.decimal "size"
+    t.string "produce_type"
+    t.index ["user_id"], name: "index_products_on_user_id"
+  end
+
   create_table "seeds", force: :cascade do |t|
     t.bigint "slot_id"
     t.bigint "user_id"
@@ -45,7 +59,12 @@ ActiveRecord::Schema.define(version: 2020_02_03_150245) do
     t.decimal "nutrition"
     t.decimal "toxicity"
     t.decimal "days_required"
+    t.string "produce_type"
+    t.decimal "longevity"
+    t.bigint "store_id"
+    t.decimal "value"
     t.index ["slot_id"], name: "index_seeds_on_slot_id"
+    t.index ["store_id"], name: "index_seeds_on_store_id"
     t.index ["user_id"], name: "index_seeds_on_user_id"
   end
 
@@ -53,6 +72,14 @@ ActiveRecord::Schema.define(version: 2020_02_03_150245) do
     t.bigint "stack_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.decimal "health"
+    t.decimal "nutrition"
+    t.decimal "longevity"
+    t.decimal "size"
+    t.string "produce_type"
+    t.decimal "days_required"
+    t.decimal "day_of_seeding"
+    t.string "name"
     t.index ["stack_id"], name: "index_slots_on_stack_id"
   end
 
@@ -65,16 +92,31 @@ ActiveRecord::Schema.define(version: 2020_02_03_150245) do
     t.index ["farm_id"], name: "index_stacks_on_farm_id"
   end
 
+  create_table "stores", force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id", null: false
+    t.bigint "seed_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["seed_id"], name: "index_stores_on_seed_id"
+    t.index ["user_id"], name: "index_stores_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.string "email"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.decimal "days_played"
+    t.decimal "money"
   end
 
   add_foreign_key "farms", "users"
   add_foreign_key "items", "users"
   add_foreign_key "seeds", "slots"
+  add_foreign_key "seeds", "stores"
   add_foreign_key "stacks", "farms"
+  add_foreign_key "stores", "seeds"
+  add_foreign_key "stores", "users"
 end
