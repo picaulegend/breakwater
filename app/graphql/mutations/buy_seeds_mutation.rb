@@ -1,33 +1,55 @@
 module Mutations
   class BuySeedsMutation < Mutations::BaseMutation
-    argument :seed_id, ID, required: true
+    argument :item_id, ID, required: true
 
     field :user, Types::UserType, null: true
     field :seed, Types::SeedType, null: true
+    field :item, Types::ItemType, null: true
+    field :store, Types::StoreType, null: true
     field :errors, Types::ValidationErrorsType, null: true
 
-    def resolve(seed_id:)
+    def resolve(item_id:)
       check_authentication!
 
-      seed = Seed.find(seed_id)
+      item = Item.find(item_id)
+      store = item.store
       user = context[:current_user]
+      seed = item.seed
+      reputation = store.calculateReputation(store.reputation)
+      stock = item.amount_in_stock ? item.amount_in_stock : 0
 
-      cost = seed.value ? seed.value : 0
-      money = user.money ? user.money : 0
+      if stock > 0
+        cost = store.calculatePrice(seed.value, reputation)
+        money = user.money ? user.money : 0
 
-      puts cost
-      puts money
+        if money > cost
+          newMoney = money - cost
+          user.update(money: newMoney)
+          store.update(reputation: reputation)
 
-      if money > cost
-        if seed.update(user: user, store: nil)
-          { seed: seed }
+          newAmount = stock - 1
+
+          Seed.create(
+            user: user,
+            name: seed.name,
+            produce_type: seed.produce_type,
+            longevity: seed.longevity,
+            health: seed.health,
+            nutrition: seed.nutrition,
+            days_required: seed.days_required,
+            value: seed.value,
+          )
+
+          if item.update(amount_in_stock: newAmount)
+            { user: user }
+          else
+            { errors: stack.errors }
+          end
         else
-          { errors: stack.errors }
+          raise "Not enough money"
         end
-        newMoney = money - value
-        user.update(money: newMoney)
       else
-        { errors: "not enough money" }
+        raise "Not in stock"
       end
     end
   end

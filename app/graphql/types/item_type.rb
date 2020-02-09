@@ -1,9 +1,8 @@
 module Types
   class ItemType < Types::BaseObject
     field :id, ID, null: false
-    field :title, String, null: false
     field :description, String, null: true
-    field :image_url, String, null: true
-    field :user, Types::UserType, null: false
+    field :amount_in_stock, Integer, null: true
+    field :seed, Types::SeedType, null: true
   end
 end

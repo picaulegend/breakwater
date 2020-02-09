@@ -7,20 +7,47 @@ const store = gql`
     store(id: $id) {
       id
       name
-      seeds {
+      items {
         id
-        name
-        value
+        seed {
+          id
+          name
+          value
+        }
+        amountInStock
       }
     }
   }
 `;
 
 const buySeeds = gql`
-  mutation BuySeeds($seedId: ID!) {
-    buySeeds(seedId: $seedId) {
-      seed {
+  mutation BuySeeds($itemId: ID!) {
+    buySeeds(itemId: $itemId) {
+      errors {
+        details
+        fullMessages
+      }
+      user {
         id
+        name
+        daysPlayed
+        money
+        farm {
+          id
+        }
+        store {
+          id
+        }
+        seeds {
+          id
+          name
+          produceType
+        }
+        products {
+          id
+          name
+          value
+        }
       }
     }
   }
@@ -42,14 +69,21 @@ export default function Store({ storeId }) {
 
 function WithData({ data }) {
   const store = data.store;
-  const seeds = store ? store.seeds : [];
+  const items = store ? store.items : [];
   return (
     <div>
       <ul>
-        {seeds.map(seed => {
+        {items.map(item => {
+          const seed = item.seed;
           return (
-            <li key={seed.id}>
-              {seed.name} ({seed.value}){" "}
+            <li key={item.id}>
+              {seed && (
+                <span>
+                  {seed.name} ({seed.value})
+                </span>
+              )}
+              <br />
+              Amount in stock: {item.amountInStock}{" "}
               <Mutation mutation={buySeeds}>
                 {(buySeeds, { loading: authenticating }) =>
                   authenticating ? (
@@ -59,7 +93,7 @@ function WithData({ data }) {
                       onClick={() =>
                         buySeeds({
                           variables: {
-                            seedId: seed.id
+                            itemId: item.id
                           }
                         })
                           .then(res => {
