@@ -2,13 +2,17 @@ import React from "react";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 
+import "./store.css"
+
 const store = gql`
   query Store($id: ID!) {
     store(id: $id) {
       id
       name
+      reputation
       items {
         id
+        price
         seed {
           id
           name
@@ -21,8 +25,8 @@ const store = gql`
 `;
 
 const buySeeds = gql`
-  mutation BuySeeds($itemId: ID!) {
-    buySeeds(itemId: $itemId) {
+  mutation BuySeeds($itemId: ID! $amount: Float) {
+    buySeeds(itemId: $itemId, amount: $amount) {
       errors {
         details
         fullMessages
@@ -55,7 +59,7 @@ const buySeeds = gql`
 
 export default function Store({ storeId }) {
   return (
-    <div>
+    <div className="store">
       <h1>Breakwater Store</h1>
       <Query query={store} variables={{ id: storeId }}>
         {({ data, loading, error }) => {
@@ -79,7 +83,7 @@ function WithData({ data }) {
             <li key={item.id}>
               {seed && (
                 <span>
-                  {seed.name} ({seed.value})
+                  {seed.name}, value: {seed.value}, price: {item.price}
                 </span>
               )}
               <br />
@@ -93,7 +97,8 @@ function WithData({ data }) {
                       onClick={() =>
                         buySeeds({
                           variables: {
-                            itemId: item.id
+                            itemId: item.id,
+                            amount: 50
                           }
                         })
                           .then(res => {

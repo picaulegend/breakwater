@@ -1,0 +1,39 @@
+.container {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  float: left;
+  width: 100%;
+  background: orange;
+}
+
+.header-meta {
+  float: left;
+  width: 100%;
+}
+
+.header-left {
+  float: left;
+}
+
+.header ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.header li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.header-right {
+  float: right;
+}
+
+.header-navigation {
+  float: left;
+  width: 100%;
+}

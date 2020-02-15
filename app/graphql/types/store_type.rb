@@ -3,6 +3,7 @@ module Types
     field :id, ID, null: false
     field :name, String, null: false
     field :user, Types::UserType, null: false
+    field :reputation, Integer, null: true
     field :seeds, [Types::SeedType], null: true
     field :items, [Types::ItemType], null: true
   end

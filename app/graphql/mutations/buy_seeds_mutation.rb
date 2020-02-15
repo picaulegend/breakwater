@@ -1,6 +1,8 @@
 module Mutations
   class BuySeedsMutation < Mutations::BaseMutation
     argument :item_id, ID, required: true
+    argument :amount, Float, required: false
+    argument :custom_price, Float, required: false
 
     field :user, Types::UserType, null: true
     field :seed, Types::SeedType, null: true
@@ -8,7 +10,7 @@ module Mutations
     field :store, Types::StoreType, null: true
     field :errors, Types::ValidationErrorsType, null: true
 
-    def resolve(item_id:)
+    def resolve(item_id:, amount:, custom_price:)
       check_authentication!
 
       item = Item.find(item_id)
@@ -18,8 +20,10 @@ module Mutations
       reputation = store.calculateReputation(store.reputation)
       stock = item.amount_in_stock ? item.amount_in_stock : 0
 
-      if stock > 0
-        cost = store.calculatePrice(seed.value, reputation)
+      amount_needed = amount ? amount - 1 : 0
+
+      if stock > amount_needed
+        cost = store.calculatePrice(seed.value, reputation, custom_price)
         money = user.money ? user.money : 0
 
         if money > cost
@@ -49,7 +53,7 @@ module Mutations
           raise "Not enough money"
         end
       else
-        raise "Not in stock"
+        { errors: { "details" => "Not in stock" } }
       end
     end
   end

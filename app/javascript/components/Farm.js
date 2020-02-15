@@ -3,6 +3,8 @@ import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { css, jsx } from "@emotion/core";
 
+import "./farm.css";
+
 const farm = gql`
   query Farm($id: ID!) {
     farm(id: $id) {
@@ -66,9 +68,9 @@ const reapSlot = gql`
   }
 `;
 
-export default function Farm({ availableSeeds, farmId }) {
+export default function Farm({ availableSeeds, farmId, daysPlayed }) {
   return (
-    <Query query={farm} variables={{id: farmId}}>
+    <Query query={farm} variables={{ id: farmId }}>
       {({ data, loading, error }) => {
         console.log(data, error);
         return (
@@ -76,7 +78,11 @@ export default function Farm({ availableSeeds, farmId }) {
             {loading ? (
               "loading..."
             ) : (
-              <WithData data={data} availableSeeds={availableSeeds} />
+              <WithData
+                data={data}
+                availableSeeds={availableSeeds}
+                daysPlayed={daysPlayed}
+              />
             )}
           </div>
         );
@@ -85,7 +91,7 @@ export default function Farm({ availableSeeds, farmId }) {
   );
 }
 
-function WithData({ data, availableSeeds }) {
+function WithData({ data, availableSeeds, daysPlayed }) {
   const farm = data.farm;
   const stacks = farm.stacks;
   return (
@@ -100,6 +106,7 @@ function WithData({ data, availableSeeds }) {
               index={index}
               slots={stack.slots}
               availableSeeds={availableSeeds}
+              daysPlayed={daysPlayed}
             />
           );
         })}
@@ -131,10 +138,12 @@ function WithData({ data, availableSeeds }) {
   );
 }
 
-function Stack({ stackId, index, slots, availableSeeds }) {
+function Stack({ stackId, index, slots, availableSeeds, daysPlayed }) {
   return (
-    <li>
-      <h3>Stack {index}</h3>
+    <li className="stack">
+      <div className="stack-header">
+        Stack {index} - Water, lighting, nutrition
+      </div>
       <ul>
         {slots.map(slot => {
           return (
@@ -148,6 +157,7 @@ function Stack({ stackId, index, slots, availableSeeds }) {
               health={slot.health}
               dayOfSeeding={slot.dayOfSeeding}
               daysRequired={slot.daysRequired}
+              daysPlayed={daysPlayed}
             />
           );
         })}
@@ -187,7 +197,8 @@ function Slot({
   health,
   dayOfSeeding,
   daysRequired,
-  availableSeeds = []
+  availableSeeds = [],
+  daysPlayed
 }) {
   const [seed, pickSeed] = useState("");
   return (
@@ -221,6 +232,7 @@ function Slot({
                           console.log(err);
                         })
                     }
+                    disabled={dayOfSeeding + daysRequired > daysPlayed}
                   >
                     Reap slot
                   </button>

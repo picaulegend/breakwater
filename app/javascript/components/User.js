@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { css, jsx } from "@emotion/core";
 
 import Farm from "./Farm";
 import Store from "./Store";
+
+import "./user.css";
 
 const user = gql`
   query User {
@@ -44,6 +46,18 @@ const sellProduct = gql`
   }
 `;
 
+const forwardDay = gql`
+  mutation ForwardDay {
+    forwardDay {
+      user {
+        id
+        money
+        daysPlayed
+      }
+    }
+  }
+`;
+
 export default function User() {
   return (
     <Query query={user}>
@@ -56,6 +70,7 @@ export default function User() {
 }
 
 function WithData({ data }) {
+  const [view, setView] = useState("farm");
   const user = data.user;
   if (!user) {
     localStorage.removeItem("mlToken");
@@ -63,65 +78,116 @@ function WithData({ data }) {
   }
   const { id, name, daysPlayed, money, seeds, products } = user;
   return (
-    <div
-      css={css`
-        padding: 32px;
-        background-color: hotpink;
-        font-size: 24px;
-        border-radius: 4px;
-        color: orange;
-      `}
-    >
-      User: {name}; {id}, Days played: {daysPlayed}, Money: {money}
-      <br />
-      <h2>Inventory:</h2>
-      <h3>Seeds</h3>
-      <ul>
-        {seeds.map(seed => {
-          return (
-            <li key={seed.id}>
-              {seed.name} - {seed.produceType}
-            </li>
-          );
-        })}
-      </ul>
-      <h3>Products</h3>
-      <Mutation mutation={sellProduct}>
-        {(sellProduct, { loading: authenticating }) =>
-          authenticating ? (
-            "..."
-          ) : (
+    <div className="container">
+      <div className="header">
+        <div className="header-meta">
+          <div className="header-left">
+            {name} ({id})
+          </div>{" "}
+          <div className="header-right">
+            Days played: {daysPlayed}, Money: {money}
+          </div>
+        </div>
+        <nav className="header-navigation">
+          <div className="header-left">
             <ul>
-              {products.map(product => {
+              {["Farm", "Inventory", "Store"].map((item, i) => {
                 return (
-                  <li key={product.id}>
-                    {product.name}, value: {product.value}{" "}
-                    <button
-                      onClick={() =>
-                        sellProduct({
-                          variables: { productId: product.id }
-                        })
-                          .then(res => {
-                            console.log(res);
-                          })
-                          .catch(err => {
-                            console.log(err);
-                          })
-                      }
-                    >
-                      Sell
-                    </button>
+                  <li key={i} onClick={() => setView(item.toLowerCase())}>
+                    {item}
                   </li>
                 );
               })}
             </ul>
-          )
-        }
-      </Mutation>
-      <br />
-      <h2>Farm:</h2>
-      <Farm availableSeeds={user.seeds} farmId={user.farm.id} />
-      <Store storeId={user.store.id} userId={id} />
+          </div>
+          <div className="header-right">
+            <Mutation mutation={forwardDay}>
+              {(forwardDay, { loading: authenticating }) =>
+                authenticating ? (
+                  "..."
+                ) : (
+                  <button
+                    onClick={() =>
+                      forwardDay()
+                        .then(res => {
+                          console.log(res);
+                        })
+                        .catch(err => {
+                          console.log(err);
+                        })
+                    }
+                  >
+                    Next day
+                  </button>
+                )
+              }
+            </Mutation>
+            <button onClick={() => localStorage.removeItem("mlToken")}>
+              Sign out
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {view === "farm" ? (
+        <Farm
+          availableSeeds={user.seeds}
+          farmId={user.farm.id}
+          daysPlayed={user.daysPlayed}
+        />
+      ) : view === "store" ? (
+        <Store storeId={user.store.id} userId={id} />
+      ) : view === "inventory" ? (
+        <div>
+          <h2>Inventory:</h2>
+          <h3>Seeds</h3>
+          <ul>
+            {seeds.map(seed => {
+              return (
+                <li key={seed.id}>
+                  {seed.name} - {seed.produceType}
+                </li>
+              );
+            })}
+          </ul>
+          <h3>Products</h3>
+          <Mutation mutation={sellProduct}>
+            {(sellProduct, { loading: authenticating }) =>
+              authenticating ? (
+                "..."
+              ) : (
+                <ul>
+                  {products.map(product => {
+                    return (
+                      <li key={product.id}>
+                        {product.name}, value: {product.value}{" "}
+                        <button
+                          onClick={() =>
+                            sellProduct({
+                              variables: { productId: product.id }
+                            })
+                              .then(res => {
+                                console.log(res);
+                              })
+                              .catch(err => {
+                                console.log(err);
+                              })
+                          }
+                        >
+                          Sell
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )
+            }
+          </Mutation>
+          <br />
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

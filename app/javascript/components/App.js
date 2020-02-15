@@ -24,9 +24,6 @@ export default () => {
         {token ? (
           <div>
             <User />
-            <button onClick={() => localStorage.removeItem("mlToken")}>
-              Sign out
-            </button>
           </div>
         ) : (
           <Mutation

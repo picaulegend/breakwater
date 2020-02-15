@@ -9,5 +9,6 @@ module Types
     field :reap_slot, mutation: Mutations::ReapSlotMutation
     field :sell_product, mutation: Mutations::SellProductMutation
     field :buy_seeds, mutation: Mutations::BuySeedsMutation
+    field :forward_day, mutation: Mutations::ForwardDayMutation
   end
 end
